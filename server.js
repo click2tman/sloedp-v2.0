@@ -12,6 +12,12 @@ app.use('/', httpsRedirect());
 app.use(cors());
 app.options('*', cors());
 
+app.use(function(req, res, next) {
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header('Access-Control-Allow-Methods', 'DELETE, PUT');
+	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+	next();
+});
 
 app.get('*.html', function (req, res, next) {
 	fs.readFile(__dirname + '/www' + req.url, 'utf8', function(err, data) {
