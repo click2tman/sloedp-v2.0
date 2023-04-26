@@ -20,7 +20,7 @@ app.use(function(req, res, next) {
 });
 
 app.get('*.html', function (req, res, next) {
-	fs.readFile(__dirname + '/www' + req.url, 'utf8', function(err, data) {
+	fs.readFile(__dirname + '/build' + req.url, 'utf8', function(err, data) {
 		zlib.gzip(data, function(_, file) {
 			res.writeHead(200, {'Content-Type': 'text/html', 'Content-Encoding': 'gzip'});
 			res.end(file);
@@ -29,7 +29,7 @@ app.get('*.html', function (req, res, next) {
 });
 
 app.get('*.js', function (req, res, next) {
-	fs.readFile(__dirname + '/www' + req.url, 'utf8', function(err, data) {
+	fs.readFile(__dirname + '/build' + req.url, 'utf8', function(err, data) {
 		zlib.gzip(data, function(_, file) {
 			res.writeHead(200, {'Content-Type': 'text/javascript', 'Content-Encoding': 'gzip'});
 			res.end(file);
@@ -38,7 +38,7 @@ app.get('*.js', function (req, res, next) {
 });
 
 app.get('*.css', function (req, res, next) {
-	fs.readFile(__dirname + '/www' + req.url, 'utf8', function(err, data) {
+	fs.readFile(__dirname + '/build' + req.url, 'utf8', function(err, data) {
 		zlib.gzip(data, function(_, file) {
 			res.writeHead(200, {'Content-Type': 'text/css', 'Content-Encoding': 'gzip'});
 			res.end(file);
@@ -47,7 +47,7 @@ app.get('*.css', function (req, res, next) {
 });
 
 app.get('*.woff2', function (req, res, next) {
-	fs.readFile(__dirname + '/www' + req.url, 'utf8', function(err, data) {
+	fs.readFile(__dirname + '/build' + req.url, 'utf8', function(err, data) {
 		zlib.gzip(data, function(_, file) {
 			res.writeHead(200, {'Content-Type': 'font', 'Content-Encoding': 'gzip'});
 			res.end(file);
@@ -55,8 +55,7 @@ app.get('*.woff2', function (req, res, next) {
 	})
 });
 
-
-app.use(express.static('www'));
+app.use(express.static('build'));
 
 var urls = {
 	polling_centre: "www/assets/resources/polling-centres/",
