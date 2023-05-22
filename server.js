@@ -3,9 +3,9 @@ cors = require('cors'),
 fs = require('fs'),
 async = require('async'),
 zlib = require('zlib'),
-imagemin = require('imagemin'),
-imageminJpegtran = require('imagemin-jpegtran'),
-imageminPngquant = require('imagemin-pngquant'),
+// imagemin = require('imagemin'),
+// imageminJpegtran = require('imagemin-jpegtran'),
+// imageminPngquant = require('imagemin-pngquant'),
 httpsRedirect = require('express-https-redirect'),
 app = express();
 app.use('/', httpsRedirect());
@@ -58,18 +58,19 @@ app.get('*.woff2', function (req, res, next) {
 app.use(express.static('build'));
 
 var urls = {
-	polling_centre: "www/assets/resources/polling-centres/",
-	president: "www/assets/results/all-president-election-results/",
-    parliament: "www/assets/results/all-parliamentary-election-results/",
-    mayor: "www/assets/results/all-mayor-election-results/",
-    chairperson: "www/assets/results/all-chairperson-election-results/",
-    villageheadman: "www/assets/results/all-village-headman-election-results/",
-    councilor: "www/assets/results/all-councillor-election-results/",
-    president_2018: "www/assets/results/all-president-polling-centre-results-2018/",
-    parliament_2018: "www/assets/results/all-parliamentary-polling-centre-results-2018/",
-    mayor_2018: "www/assets/results/all-mayor-chair-polling-centre-results-2018/",
-    councilor_2018: "www/assets/results/all-councillor-polling-centre-results-2018/",
-    villageheadman_2018: "www/assets/results/all-villageheadman-polling-centre-results-2018/"
+	polling_centre: "assets/resources/polling-centres/",
+	president: "assets/results/all-president-election-results/",
+    parliament: "assets/results/all-parliamentary-election-results/",
+    mayor: "assets/results/all-mayor-election-results/",
+    chairperson: "assets/results/all-chairperson-election-results/",
+    villageheadman: "assets/results/all-village-headman-election-results/",
+    councilor: "assets/results/all-councillor-election-results/",
+    president_2018: "assets/results/all-president-polling-centre-results-2018/",
+	president_2023: "assets/results/all-president-election-results-2023/",
+    parliament_2018: "assets/results/all-parliamentary-polling-centre-results-2018/",
+    mayor_2018: "assets/results/all-mayor-chair-polling-centre-results-2018/",
+    councilor_2018: "assets/results/all-councillor-polling-centre-results-2018/",
+    villageheadman_2018: "assets/results/all-villageheadman-polling-centre-results-2018/",
 }
 
 var _whole_results = {};

@@ -1,21 +1,28 @@
 import React from 'react';
-import { IonList, IonListHeader, IonItem } from "@ionic/react";
+import {
+  IonList, 
+  IonListHeader, 
+  IonModal,
+  IonItem,
+} from '@ionic/react';
 
-interface ContainerProps { availability:any, seletGranularity: any }
+interface ContainerProps { availability:any, seletGranularity: any, isOpen: any, onDidDismiss: any }
 
-const RangeViewComponent: React.FC<ContainerProps> = ({ availability, seletGranularity}) => {
+const RangeViewComponent: React.FC<ContainerProps> = ({ isOpen, onDidDismiss, availability, seletGranularity}) => {
   return (
-    <div className='range-view'>
-      {availability.region && <IonList>
-        <IonListHeader>Result Granularity</IonListHeader>
-        {availability.nationAvailable && <IonItem onClick={() => seletGranularity('nation')}>National Results</IonItem>}
-        {availability.regionAvailable && <IonItem onClick={() => seletGranularity('region')}>Results By Region</IonItem>}
-        {availability.districtAvailable && <IonItem onClick={() => seletGranularity('district')}>Results By District</IonItem>}
-        {availability.constituencyAvailable && <IonItem onClick={() => seletGranularity('constituency')}>Results By Constituency</IonItem>}
-        {availability.wardAvailable && <IonItem onClick={() => seletGranularity('ward')}>Results By Ward</IonItem>}
-        {availability.pollingCentreAvailable && <IonItem onClick={() => seletGranularity('polling_centre')}>Results By Polling Centre</IonItem>}
-      </IonList>}
-    </div>
+    <IonModal isOpen={isOpen} >
+      <div className='range-view'>
+        {availability && availability.region && <IonList>
+          <IonListHeader>Result Granularity</IonListHeader>
+          {availability.nationAvailable && <IonItem onClick={() => {seletGranularity('nation'); onDidDismiss();}}>National Results</IonItem>}
+          {availability.regionAvailable && <IonItem onClick={() => {seletGranularity('region'); onDidDismiss();}}>Results By Region</IonItem>}
+          {availability.districtAvailable && <IonItem onClick={() => {seletGranularity('district'); onDidDismiss();}}>Results By District</IonItem>}
+          {availability.constituencyAvailable && <IonItem onClick={() => {seletGranularity('constituency'); onDidDismiss();}}>Results By Constituency</IonItem>}
+          {availability.wardAvailable && <IonItem onClick={() => {seletGranularity('ward'); onDidDismiss();}}>Results By Ward</IonItem>}
+          {availability.pollingCentreAvailable && <IonItem onClick={() => {seletGranularity('polling_centre'); onDidDismiss();}}>Results By Polling Centre</IonItem>}
+        </IonList>}
+      </div>
+    </IonModal>
   );
 };
 

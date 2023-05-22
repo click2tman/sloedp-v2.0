@@ -2,15 +2,18 @@ import { IonPage, IonContent, IonTitle, IonToolbar, IonGrid, useIonViewDidEnter 
 import './index.css';
 import React from 'react';
 import HeaderView from '../../components/HeaderView';
+import Navigation from '../../components/Navigation';
 
 const About: React.FC = () => {
+	const [open, setOpen] = React.useState(false);
 	useIonViewDidEnter(() => {
     console.log('ionViewDidLoad AboutPage');
   })
 
   return (
     <IonPage id="content">
-		<HeaderView type='about'>
+		<Navigation open={open} setOpen={setOpen}/>
+		<HeaderView type='about' setOpen={setOpen}>
 			<IonToolbar color="dark" sub-navbar>
 				<IonTitle>
 					About this app

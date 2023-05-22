@@ -1,5 +1,5 @@
 import { Redirect, Route } from 'react-router-dom';
-import React from 'react';
+import React, { Suspense } from 'react';
 import { 
   IonApp, 
   IonRouterOutlet, 
@@ -7,10 +7,6 @@ import {
 } from '@ionic/react';
 
 import { IonReactRouter } from '@ionic/react-router';
-import Splash from './pages/splash';
-import PresidentPage from './pages/PresidentPage';
-import Navigation from './components/Navigation';
-
 import { Provider } from 'react-redux';
 import { store } from './store';
 
@@ -33,15 +29,18 @@ import '@ionic/react/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 import './App.css';
-
 import 'font-awesome/css/font-awesome.min.css';
-import About from './pages/about';
+
+import PresidentPage from './pages/PresidentPage';
 import Parliament from './pages/Parliament';
-import Mayor from './pages/Mayor';
 import ChairPerson from './pages/ChairPerson';
+import Mayor from './pages/Mayor';
 import Councilor from './pages/Councilor';
-import CandidateProfile from './pages/CandidateProfile';
-import PartyProfile from './pages/PartyProfile';
+
+const Splash = React.lazy(() => import('./pages/splash'));
+const About = React.lazy(() => import('./pages/about'));
+const CandidateProfile = React.lazy(() => import('./pages/CandidateProfile'));
+const PartyProfile = React.lazy(() => import('./pages/PartyProfile'));
 
 setupIonicReact();
 
@@ -49,33 +48,34 @@ const App: React.FC = () => {
   return (
     <Provider store={store}>
       <IonApp>
-        <Navigation/>
+      <Suspense fallback={<div>Loading...</div>}>
         <IonReactRouter>
           <IonRouterOutlet>
-            <Route exact path="/splash" component={Splash}>
-            </Route>
-            <Route exact path="/president" component={PresidentPage}>
-            </Route>
-            <Route exact path="/about" component={About}>
-            </Route>
-            <Route exact path="/mayor" component={Mayor}>
-            </Route>
-            <Route exact path="/parliamentary" component={Parliament}>
-            </Route>
-            <Route exact path="/chairperson" component={ChairPerson}>
-            </Route>
-            <Route exact path="/councilor" component={Councilor}>
-            </Route>
-            <Route exact path="/candidate/:id" component={CandidateProfile}>
-            </Route>
-            <Route exact path="/party/:id" component={PartyProfile}>
-            </Route>
             <Route exact path="/">
               <Redirect to="/splash" />
+            </Route>
+            <Route exact path="/splash" component={Splash}>
+            </Route>
+            <Route exact path="/president" render={() => <PresidentPage />}>
+            </Route>
+            <Route exact path="/about" render={() => <About />}>
+            </Route>
+            <Route exact path="/mayor" render={() => <Mayor />}>
+            </Route>
+            <Route exact path="/parliamentary" render={() => <Parliament />}>
+            </Route>
+            <Route exact path="/chairperson" render={() => <ChairPerson />}>
+            </Route>
+            <Route exact path="/councilor" render={() => <Councilor />}>
+            </Route>
+            <Route exact path="/candidate/:id" render={() => <CandidateProfile />}>
+            </Route>
+            <Route exact path="/party/:id" render={() => <PartyProfile />}>
             </Route>
           </IonRouterOutlet>
         </IonReactRouter>
         {/* <IonNav id="content" root={() => <Splash />}></IonNav> */}
+        </Suspense>
       </IonApp>
     </Provider>
   );

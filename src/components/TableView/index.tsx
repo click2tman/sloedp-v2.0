@@ -1,14 +1,13 @@
-import { IonGrid,  IonToggle, useIonRouter, IonRow, IonCol, useIonLoading, IonList, IonItem, IonSelect, IonSelectOption } from '@ionic/react';
+import { IonGrid,  IonToggle, useIonRouter, IonRow, IonCol, useIonLoading, IonSelect, IonSelectOption } from '@ionic/react';
 import './index.css';
 import React, { useEffect, useState } from 'react';
 import { loadResultsByFields  } from '../../provider/data'
 import { useSelector } from 'react-redux';
 import { dataSelector } from '../../slices/dataSlice';
-import Select from 'react-select'
 
-interface ContainerProps { year: number, region: string, type: string, boundary: any }
+interface ContainerProps { year: number, region: string, type: string, boundary: any, onCloseMenu: any }
 
-const TableView: React.FC<ContainerProps> = ({year, region, type, boundary}) => {
+const TableView: React.FC<ContainerProps> = ({year, region, type, boundary, onCloseMenu}) => {
 	const [round, setRound] = useState<boolean>(true);
 	const [result, setResult] = useState<any>({
 		'VotesCandidate': "Total",
@@ -44,62 +43,71 @@ const TableView: React.FC<ContainerProps> = ({year, region, type, boundary}) => 
 		router.push(`/candidate/${candidate_id}`, "forward", "push");
   }
 
-  const drawTable = () => {
+  const drawTable = async () => {
     var fields: any = {
       year: year,
       type: type,
       region: region
     }
 
-		present({
-			message: 'Loading data...',
-			duration: 1000
-		});
+	present({
+		message: 'Loading data...',
+		duration: 1000
+	});
 
     if (type === 'president' && two_rounds.indexOf(year) !== -1)
       fields['round'] = round ? 'second' : 'first'
 
     setIsNation(region === 'nation');
 
-    const data = loadResultsByFields(selector, fields);
-		let cur_result = { ...result };
-		cur_result.Parties = data['Parties'];
-		cur_result.Candidates = data['Candidates'];
-		cur_result.total_results = data['Boundaries'];
+    const data = await loadResultsByFields(selector, fields);
+	// let data = {
+	// 	type: fields.type,
+	// 	year: fields.year,
+	// 	region: fields.region,
+	// 	ValidVotes: 0,
+	// 	Parties: [],
+	// 	Candidates: [{}],
+	// 	Boundaries: [{candidates: [], votes: 0, name: '', name_council: ''}]
+	// }
+	let cur_result = { ...result };
+	cur_result.Parties = data['Parties'];
+	cur_result.Candidates = data['Candidates'];
+	cur_result.total_results = data['Boundaries'];
 
-		cur_result.TotalVotes = year == 2018 ? 3178664 : data['ValidVotes'];
-		cur_result.InvalidVotes = year == 2018 ? 139427 : 0;
-		cur_result.ResultStatus = "Final & Certified"
-			
-		cur_result.Boundaries = [];
-		cur_result.ValidVotes = 0;
-		cur_result.VotesPecentage = "0%";
-		cur_result.Results = [];
+	cur_result.TotalVotes = year == 2018 ? 3178664 : data['ValidVotes'];
+	cur_result.InvalidVotes = year == 2018 ? 139427 : 0;
+	cur_result.ResultStatus = "Final & Certified"
+		
+	cur_result.Boundaries = [];
+	cur_result.ValidVotes = 0;
+	cur_result.VotesPecentage = "0%";
+	cur_result.Results = [];
 
-		if (data['Boundaries'].length > 0) {
-			cur_result.Results = data['Boundaries'][0].candidates;
-			cur_result.ValidVotes = data['Boundaries'][0].votes;
-			if (year === 2023) {
-				if (cur_result.TotalVotes === 0)
-					cur_result.VotesPecentage = "0%"
-				else {
-					cur_result.VotesPecentage = ((cur_result.ValidVotes / cur_result.TotalVotes) * 100).toFixed(2) + '%'
-				}
-			}
-			else
-				cur_result.VotesPecentage = "100%"
-			if (data['Boundaries'][0].votes > 0) setNoWinner(false);
-			else setNoWinner(true);
-
-			for (let row of data['Boundaries']) {
-				if (type == 'mayor')
-					cur_result.Boundaries.push({id: row.name, text: row.name_council});
-				else
-					cur_result.Boundaries.push({id: row.name, text: row.name});
+	if (data['Boundaries'].length > 0) {
+		cur_result.Results = data['Boundaries'][0]?.candidates;
+		cur_result.ValidVotes = data['Boundaries'][0]?.votes;
+		if (year === 2023) {
+			if (cur_result.TotalVotes === 0)
+				cur_result.VotesPecentage = "0%"
+			else {
+				cur_result.VotesPecentage = ((cur_result.ValidVotes / cur_result.TotalVotes) * 100).toFixed(2) + '%'
 			}
 		}
-		dismiss();
-		setResult(cur_result);
+		else
+			cur_result.VotesPecentage = "100%"
+		if (data['Boundaries'][0].votes > 0) setNoWinner(false);
+		else setNoWinner(true);
+
+		for (let row of data['Boundaries']) {
+			if (type == 'mayor')
+				cur_result.Boundaries.push({id: row.name, text: row.name_council});
+			else
+				cur_result.Boundaries.push({id: row.name, text: row.name});
+		}
+	}
+	dismiss();
+	setResult(cur_result);
   }
 
   const onSelectChange = (selectedValue: any) => {
@@ -137,10 +145,14 @@ const TableView: React.FC<ContainerProps> = ({year, region, type, boundary}) => 
 		setIsRoundAvailable(type === 'president' && two_rounds.indexOf(year) !== -1);
 		setRound(year === 2018);
 		drawTable();
-	}, [])
+	}, [region])
+
+	useEffect(() => {
+		drawTable()
+	}, [round])
 
   return (
-	<div className='table-view'>
+	<div className='table-view' onClick={onCloseMenu}>
 		{!isNation && <IonGrid>
 			<IonRow>
 				<IonCol className="ion-col-3 ion-text-right filter-text">Filter: </IonCol>
@@ -161,7 +173,7 @@ const TableView: React.FC<ContainerProps> = ({year, region, type, boundary}) => 
 		</IonGrid>}
 		{isRoundAvailable && (<div className="round-box">
 			<label>Round: First&nbsp;</label>
-			<IonToggle checked={round} onChange={() => drawTable()}></IonToggle>
+			<IonToggle checked={round} onIonChange={() => setRound(!round)}></IonToggle>
 			<label>&nbsp;Second</label>
 		</div>)}
 

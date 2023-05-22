@@ -1,10 +1,11 @@
 {
-  "name": "sleodp",
+  "name": "sloedp-v01",
   "version": "0.0.1",
   "private": true,
   "author": "TpISENT (SL) Limited",
   "homepage": "https://tpisent.com/",
   "dependencies": {
+    "@capacitor/android": "4.7.1",
     "@capacitor/app": "4.1.1",
     "@capacitor/core": "4.7.1",
     "@capacitor/haptics": "4.1.0",

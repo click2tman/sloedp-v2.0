@@ -1,11 +1,14 @@
-import { IonPage, IonContent, IonTitle, IonToolbar, IonGrid, IonRow, IonCol, useIonRouter } from '@ionic/react';
+import { IonPage, IonContent, IonTitle, IonToolbar, IonGrid, IonRow, IonCol, useIonRouter, IonButton, IonButtons, IonIcon, } from '@ionic/react';
 import './index.css';
 import React, { useEffect, useState } from 'react';
 import HeaderView from '../../components/HeaderView';
 import { getParty } from '../../provider/data'
+import Navigation from '../../components/Navigation';
+import { arrowBackOutline } from 'ionicons/icons';
 
 const PartyProfile: React.FC = () => {
 	const [party, setParty] = useState<any>();
+	const [open, setOpen] = React.useState(false);
 	const router = useIonRouter();
 
 	const sourceUrl = (url: string) => {
@@ -33,8 +36,14 @@ const PartyProfile: React.FC = () => {
 
   return (
 	<IonPage id="content">
-		<HeaderView type="headerview" isGranularityEnabled={false}>
+		<Navigation open={open} setOpen={setOpen}/>
+		<HeaderView type="headerview" isGranularityEnabled={false} setOpen={setOpen}>
 			<IonToolbar color="dark" className="ion-sub-navbar">
+				<IonButtons slot="start">
+					<IonButton className='ion-float-left' onClick={() => router.goBack()} style={{ zIndex: 200}}>
+						<IonIcon icon={arrowBackOutline} slot="start"></IonIcon>
+					</IonButton>
+				</IonButtons>
 				<IonTitle>
 					Party Details
 				</IonTitle>
@@ -46,10 +55,10 @@ const PartyProfile: React.FC = () => {
 				<IonGrid className="show-core">
 					<IonRow>
 						<IonCol className="ion-col-4 ion-text-center">
-							<img className="party-logo" src={sourceUrl(party.Logo)} />
+							<img className="party-logo" src={sourceUrl(party.Logo)} alt={party.Logo}/>
 						</IonCol>
 						<IonCol className="ion-col-8">
-							<h4><a href={party.Website} target="_blank">{ party.Name }</a></h4>
+							<h4><a href={party.Website} target="_blank" rel="noreferrer">{ party.Name }</a></h4>
 							<p><strong>Founders:</strong> { party.Founders }</p>
 							<p><strong>Date Founded:</strong> { party.DateFounded }</p>
 							<p><strong>Description:</strong></p> <div dangerouslySetInnerHTML={{ __html: party.Description }}></div>
@@ -64,7 +73,7 @@ const PartyProfile: React.FC = () => {
 					</IonRow>
 					<IonRow>
 						<IonCol>
-							<h4><a href={party.Website} target="_blank">{ party.Name }</a></h4>
+							<h4><a href={party.Website} target="_blank" rel="noreferrer">{ party.Name }</a></h4>
 							<p><strong>Founders:</strong> { party.Founders }</p>
 							<p><strong>Date Founded:</strong> { party.DateFounded }</p>
 							<p><strong>Description:</strong></p> <div dangerouslySetInnerHTML={{ __html: party.Description }}></div>
@@ -74,12 +83,12 @@ const PartyProfile: React.FC = () => {
 				<IonGrid className="show-mobile">
 					<IonRow>
 						<IonCol className="ion-text-center">
-							<img className="party-logo" src={sourceUrl(party.Logo)} />
+							<img className="party-logo" src={sourceUrl(party.Logo)} alt={party.Logo}/>
 						</IonCol>
 					</IonRow>
 					<IonRow>
 						<IonCol>
-							<h4><a href={party.Website} target="_blank">{ party.Name }</a></h4>
+							<h4><a href={party.Website} target="_blank" rel="noreferrer">{ party.Name }</a></h4>
 							<p><strong>Founders:</strong> { party.Founders }</p>
 							<p><strong>Date Founded:</strong> { party.DateFounded }</p>
 							<p><strong>Description:</strong></p> <div dangerouslySetInnerHTML={{ __html: party.Description }}></div>

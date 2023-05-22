@@ -10,7 +10,7 @@ import '@ionic/react/css/ionic-swiper.css';
 import 'swiper/css/pagination';
 import TableView from '../TableView';
 
-const ContentView: React.FC<{year: any, type: string, region: any, availability: any, setGranularity: any}> = ({year, type, region, availability, setGranularity}) => {
+const ContentView: React.FC<{year: any, type: string, region: any, availability: any, setGranularity: any, setOpen: any}> = ({year, type, region, availability, setGranularity, setOpen}) => {
 	const [state, setState] = useState({
 		mapMode: true,
 		sidebarDisabled: false,
@@ -157,8 +157,8 @@ const ContentView: React.FC<{year: any, type: string, region: any, availability:
 						</IonButton>
 					</IonButtons>
 				</IonToolbar>
-				{!state.mapMode && <TableView year={year} region={region} type={type} boundary={boundary} ></TableView>}
-				{state.mapMode && <MapView year={year} region={region} type={type} onChangeBoundary={(str: string) => setBoundary(str)} />}
+				{!state.mapMode && <TableView onCloseMenu={() => setOpen(false)} year={year} region={region} type={type} boundary={boundary} ></TableView>}
+				{state.mapMode && <MapView onCloseMenu={() => setOpen(false)} year={year} region={region} type={type} onChangeBoundary={(str: string) => setBoundary(str)} />}
 			</IonCol>
 		</IonRow>}
 	</IonGrid>

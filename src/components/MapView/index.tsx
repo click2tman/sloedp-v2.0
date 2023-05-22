@@ -1,4 +1,3 @@
-import { icon, latLng } from 'leaflet';
 import React, { useEffect, useState, useRef } from 'react';
 import { IonGrid, IonToggle, useIonRouter, IonRow, IonCol, useIonLoading } from "@ionic/react";
 import { useSelector, useDispatch } from 'react-redux';
@@ -11,11 +10,12 @@ import region2018GeoJSON from '../../assets/maps/region-2018.json'
 import districtGeoJSON from '../../assets/maps/district.json'
 import district2018GeoJSON from '../../assets/maps/district-2018.json'
 import { MapContainer, TileLayer, Marker, GeoJSON, Popup, useMap } from 'react-leaflet';
+import { icon, latLng, Layer, marker, geoJSON, tileLayer } from 'leaflet';
 import './index.css';
 
-interface ContainerProps { year: number, region: string, type: string, onChangeBoundary: any}
+interface ContainerProps { year: number, region: string, type: string, onChangeBoundary: any, onCloseMenu: any}
 
-const MapView: React.FC<ContainerProps> = ({year, region, type, onChangeBoundary}) => {
+const MapView: React.FC<ContainerProps> = ({year, region, type, onChangeBoundary, onCloseMenu}) => {
 	const [round, setRound] = useState<boolean>(true);
 	const [result, setResult] = useState<any>({
 		'ResultStatus': "",
@@ -107,20 +107,24 @@ const MapView: React.FC<ContainerProps> = ({year, region, type, onChangeBoundary
 		return boundary_json
 	}
 
-	const otherPercent = (candidates: any) => {
-		return (100.0 - parseFloat(candidates[0].ValidVotesPercentage) - parseFloat(candidates[1].ValidVotesPercentage)).toFixed(2);
+	// const otherPercent = (candidates: any) => {
+	// 	return (100.0 - parseFloat(candidates[0].ValidVotesPercentage) - parseFloat(candidates[1].ValidVotesPercentage)).toFixed(2);
+	// }
+
+	// const getBoundaryColor = (boundary: any) => {
+	// 	var boundary_key = makeKey(boundary.name)
+	// 	return colorFilter(selector.boundary_json[boundary_key].candidates[0].CandidatePoliticalPartyColor)
+	// }
+
+	const changeRound = (new_round: any) => {
+		setRound(new_round);
 	}
 
-	const getBoundaryColor = (boundary: any) => {
-		var boundary_key = makeKey(boundary.name)
-		return colorFilter(selector.boundary_json[boundary_key].candidates[0].CandidatePoliticalPartyColor)
-	}
+	// useEffect(() => {
+	// 	drawMap()
+	// }, [round])
 
-	const changeRound = () => {
-		drawMap()
-	}
-
-	const drawMap = () => {
+	const drawMap = async () => {
 		let fields: any = {
 			year: year,
 			type: type,
@@ -134,7 +138,18 @@ const MapView: React.FC<ContainerProps> = ({year, region, type, onChangeBoundary
 			duration: 1000
 		});
 
-		const data = loadResultsByFields(selector, fields);
+		const data = await loadResultsByFields(selector, fields);
+		// let data = {
+		// 	type: fields.type,
+		// 	year: fields.year,
+		// 	region: fields.region,
+		// 	ValidVotes: 0,
+		// 	Parties: [],
+		// 	Candidates: [{}],
+		// 	Boundaries: [{candidates: [], votes: 0, name: '', name_council: ''}],
+		// 	polling_centres_json: [],
+		// 	results: []
+		// }
 		dispatch(setPollingCentresJson(data.polling_centres_json));
 		dispatch(setResults(data.results));
 
@@ -297,7 +312,7 @@ const MapView: React.FC<ContainerProps> = ({year, region, type, onChangeBoundary
 	}, [])
 	
     return (
-		<div className='map-view'>
+		<div className='map-view' onClick={onCloseMenu}>
 			<div className="view-container">
 				<MapContainer className="map" center={mapOptions.center} zoom={mapOptions.zoom} scrollWheelZoom={false}>
 					<ResizeMap />
@@ -305,7 +320,7 @@ const MapView: React.FC<ContainerProps> = ({year, region, type, onChangeBoundary
 					{/* {layers && layers[1]} */}
 					{isRoundAvailable && (<div className="round-box">
 						<label>Round: First&nbsp;</label>
-						<IonToggle checked={round} onChange={() => changeRound()}></IonToggle>
+						<IonToggle checked={round} onIonChange={() => changeRound(!round)}></IonToggle>
 						<label>&nbsp;Second</label>
 					</div>)}
 				</MapContainer>

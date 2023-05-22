@@ -3,6 +3,7 @@ import React from 'react';
 import PageView from '../../components/PageView';
 
 const PresidentPage: React.FC = () => {
+  console.log('president')
   return (
     <PageView
       title="Presidential Elections"
@@ -11,4 +12,4 @@ const PresidentPage: React.FC = () => {
   );
 };
 
-export default PresidentPage;
+export default React.memo(PresidentPage);

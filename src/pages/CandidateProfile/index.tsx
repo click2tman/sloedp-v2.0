@@ -1,10 +1,13 @@
-import { IonContent, IonTitle, IonToolbar, IonGrid, IonRow, IonCol, useIonRouter, IonPage } from '@ionic/react';
+import { IonPage, IonContent, IonTitle, IonToolbar, IonGrid, IonRow, IonCol, useIonRouter, IonButton, IonButtons, IonIcon, } from '@ionic/react';
 import './index.css';
 import React, { useEffect, useState } from 'react';
 import HeaderView from '../../components/HeaderView';
 import { getCandidate } from '../../provider/data'
+import Navigation from '../../components/Navigation';
+import { arrowBackOutline } from 'ionicons/icons';
 
 const CandidateProfile: React.FC = () => {
+	const [open, setOpen] = React.useState(false);
 	const [candidate, setCandidate] = useState<any>();
 	const router = useIonRouter();
 
@@ -24,8 +27,14 @@ const CandidateProfile: React.FC = () => {
 
 	return (
 		<IonPage id="content">
-			<HeaderView type="headerview" isGranularityEnabled={false}>
+			<Navigation open={open} setOpen={setOpen}/>
+			<HeaderView type="headerview" isGranularityEnabled={false} setOpen={setOpen}>
 				<IonToolbar color="dark" className="ion-sub-navbar">
+					<IonButtons slot="start">
+						<IonButton className='ion-float-left' onClick={() => router.goBack()} style={{ zIndex: 200}}>
+							<IonIcon icon={arrowBackOutline} slot="start"></IonIcon>
+						</IonButton>
+					</IonButtons>
 					<IonTitle>
 						Candidate Details
 					</IonTitle>

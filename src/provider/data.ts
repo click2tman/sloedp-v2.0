@@ -29,7 +29,7 @@ export const toPollingCentresJson = (polling_centres: any) => {
 export const getBoundaryName = (election_result: any, fields: any) => {
   var boundary_field = "";
   var year = Number(fields.year);
-  if (fields.region == "nation") return "Sierra Leone";
+  if (fields.region === "nation") return "Sierra Leone";
   else {
     switch (fields.region) {
       case "region":
@@ -64,7 +64,7 @@ export const toArray = (json: any) => {
 };
 
 export const makeKey = (value: any = '') => {
-  return value.toLowerCase().replace(/\ /gi, '_');
+  return value.toLowerCase().replace(/\./gi, '_');
 };
 
 export const getResultType = (boundary: any) => {
@@ -98,26 +98,26 @@ export const getResultType = (boundary: any) => {
 
 export const getResultsByYear = (results: any, year: any) => {
   return results.filter((election_result: any) => {
-    return year == election_result["ElectionDate"].substring(0, 4) ? election_result : '';
+    return String(year) === election_result["ElectionDate"].substring(0, 4) ? election_result : '';
   })
 };
 
 export const getResultsByBoundary = (election_results: any, boundary: any) => {
   var result_type = getResultType(boundary);
   return election_results? election_results.filter((election_result: any) => {
-    return election_result.ResultType == result_type ? election_result : '';
+    return election_result.ResultType === result_type ? election_result : '';
   }): []
 };
 
 export const getResultsByRound = (election_results: any, round: any) => {
   return election_results.filter(function(election_result: any) {
-    return round == 'second' ? election_result['ElectionRound'] == 'Second Round' : election_result['ElectionRound'] != 'Second Round'
+    return round === 'second' ? election_result['ElectionRound'] === 'Second Round' : election_result['ElectionRound'] !== 'Second Round'
   })
 };
 
 export const makeResultsByBoundary = (election_results: any, fields: any, polling_centres_json: any) => {
   var boundary_results = getResultsByBoundary(election_results, fields.region);
-  if (fields.type == 'president')
+  if (fields.type === 'president')
     boundary_results = getResultsByRound(boundary_results, fields.round)
   
   var result_temp_boundaries: any = {}, temp_candidates:any = {}, temp_parties: any = {};
@@ -127,8 +127,8 @@ export const makeResultsByBoundary = (election_results: any, fields: any, pollin
   for (let election_result of boundary_results) {
     party = election_result['CandidatePoliticalParty'];
     CandidateFullName = election_result['CandidateFirstName'].trim() + ' ' + election_result['CandidateSurname'].trim();
-    if (party == '') { missing_parties.push(election_result); continue; }
-    if (CandidateFullName == " ") { missing_names.push(election_result); continue; }
+    if (party === '') { missing_parties.push(election_result); continue; }
+    if (CandidateFullName === " ") { missing_names.push(election_result); continue; }
 
     CandidateKey = makeKey(CandidateFullName);
     if (!temp_candidates[CandidateKey])
@@ -139,13 +139,13 @@ export const makeResultsByBoundary = (election_results: any, fields: any, pollin
     Votes = Number(election_result['ValidVotes']);
     BoundaryName = getBoundaryName(election_result, fields);
     BoundaryKey = makeKey(BoundaryName);
-    if (election_result['PollingCentreName'] && election_result['PollingCentreName'] != "")
+    if (election_result['PollingCentreName'] && election_result['PollingCentreName'] !== "")
       PollingCentreKey = makeKey(election_result['PollingCentreName']);
 
     Latitude = polling_centres_json[PollingCentreKey] ? polling_centres_json[PollingCentreKey]['PollingCentreLatitude'] : "";
     Longitude = polling_centres_json[PollingCentreKey] ? polling_centres_json[PollingCentreKey]['PollingCentreLongitude'] : "";
 
-    if (BoundaryName != "") {
+    if (BoundaryName !== "") {
       if (!result_temp_boundaries[BoundaryKey]) {
         result_temp_boundaries[BoundaryKey] = {
           votes: Votes,
@@ -154,13 +154,13 @@ export const makeResultsByBoundary = (election_results: any, fields: any, pollin
           longitude: Longitude,
           candidates: {}
         };
-        if (fields.type == 'mayor')
+        if (fields.type === 'mayor')
           result_temp_boundaries[BoundaryKey]['name_council'] = election_result['ElectionCouncil'];
         result_temp_boundaries[BoundaryKey]['candidates'][party] = Object.assign({}, election_result);
       }
       else {
         if (!result_temp_boundaries[BoundaryKey]['candidates'][party]) {
-          if (fields.type == 'mayor' && election_result['ElectionCouncil'] != '')
+          if (fields.type === 'mayor' && election_result['ElectionCouncil'] !== '')
             result_temp_boundaries[BoundaryKey]['name_council'] = election_result['ElectionCouncil'];
           result_temp_boundaries[BoundaryKey]['candidates'][party] = Object.assign({}, election_result);
           result_temp_boundaries[BoundaryKey]['votes'] += Votes;
@@ -182,7 +182,7 @@ export const makeResultsByBoundary = (election_results: any, fields: any, pollin
       BoundaryKey = makeKey(BoundaryName);
 
       if (result_temp_boundaries[BoundaryKey] && !result_temp_boundaries[BoundaryKey]['candidates'][party]) {
-        if (fields.type == 'mayor' && election_result['ElectionCouncil'] != '')
+        if (fields.type === 'mayor' && election_result['ElectionCouncil'] !== '')
             result_temp_boundaries[BoundaryKey]['name_council'] = election_result['ElectionCouncil'];
         result_temp_boundaries[BoundaryKey]['candidates'][party] = Object.assign({}, election_result);
         result_temp_boundaries[BoundaryKey]['candidates'][party]['ValidVotes'] = Votes;
@@ -200,7 +200,7 @@ export const makeResultsByBoundary = (election_results: any, fields: any, pollin
       BoundaryKey = makeKey(BoundaryName);
 
       if (result_temp_boundaries[BoundaryKey] && !result_temp_boundaries[BoundaryKey]['candidates'][party]) {
-        if (fields.type == 'mayor' && election_result['ElectionCouncil'] != '')
+        if (fields.type === 'mayor' && election_result['ElectionCouncil'] !== '')
             result_temp_boundaries[BoundaryKey]['name_council'] = election_result['ElectionCouncil'];
         result_temp_boundaries[BoundaryKey]['candidates'][party] = Object.assign({}, election_result);
         result_temp_boundaries[BoundaryKey]['candidates'][party]['ValidVotes'] = Votes;
@@ -216,7 +216,7 @@ export const makeResultsByBoundary = (election_results: any, fields: any, pollin
     row = result_temp_boundaries[key1]['candidates'];
     total_votes = result_temp_boundaries[key1]['votes'];
     for(let key2 in row) {
-      row[key2]['ValidVotesPercentage'] = total_votes == 0 ? 0 : ((row[key2]['ValidVotes'] / total_votes) * 100).toFixed(2)
+      row[key2]['ValidVotesPercentage'] = total_votes === 0 ? 0 : ((row[key2]['ValidVotes'] / total_votes) * 100).toFixed(2)
       temp_candidate_ary.push(row[key2]);
     }
 
@@ -235,7 +235,7 @@ export const makeResultsByBoundary = (election_results: any, fields: any, pollin
     })
     temp_candidate_ary.sort((a, b) => b.ValidVotes - a.ValidVotes);
 
-    if (temp_candidate_ary[0].ValidVotes == 0) temp_candidate_ary[0].CandidatePoliticalPartyColor = '999'
+    if (Number(temp_candidate_ary[0].ValidVotes) === 0) temp_candidate_ary[0].CandidatePoliticalPartyColor = '999'
     result_temp_boundaries[key1]['candidates'] = temp_candidate_ary;
   }
 
@@ -285,7 +285,8 @@ export const getCandidate = (candidate_id: any) => {
 };
 
 
-export const loadResultsByFields = (cur_state: any, fields: any) => {
+export const loadResultsByFields = async (cur_state: any, fields: any) => {
+  console.log(fields)
   let state = JSON.parse(JSON.stringify(cur_state));
 
   if (!state.results) {
@@ -305,7 +306,19 @@ export const loadResultsByFields = (cur_state: any, fields: any) => {
     }
   }
 
-  const type_results = state.whole_results[fields.type];
+  let type_results = state.whole_results[fields.type];
+  if (Number(fields.year) === 2023 && fields.type === 'president') {
+    type_results = state.whole_results[fields.type + '_2023'].map((item: any) => ({
+      ...item,
+      ElectionDate: item.ElectionYear,
+      SLEOP_ID: item.ResultSLEOP_ID,
+      ValidVotesPercent: item.ValidVotesPercent.replace('%', ''),
+      ElectionRound: item.ElectionRound === 'Round 1'? 'First Round': 'Second Round',
+      ValidVotes: item.ValidVotes.replaceAll(',', ''),
+      CandidatePhoto: item.CandidatePhoto.replace(`\/sites\/default\/files\/2023-04\/`, '')
+    }));
+  }
+
   let nextState = {
     all: {},
     whole_results: {},
@@ -314,7 +327,7 @@ export const loadResultsByFields = (cur_state: any, fields: any) => {
 
   if (type_results) {
     nextState = {
-      all: getResultsByYear(type_results, fields.year),
+      all: Number(fields.year) === 2023 && fields.type === 'president'? type_results:getResultsByYear(type_results, fields.year),
       whole_results: state.whole_results,
       polling_centres_json: toPollingCentresJson(state.whole_results['polling_centre']),
     };
@@ -328,7 +341,7 @@ export const loadResultsByFields = (cur_state: any, fields: any) => {
 
   state.results[fields.type][fields.year] = {};
   state.results[fields.type][fields.year]['all'] = nextState.all;
-
+ 
   if (fields.type === 'president') {
     if (!state.results[fields.type][fields.year][fields.region]) { state.results[fields.type][fields.year][fields.region] = {} }
     if (!state.results[fields.type][fields.year][fields.region][fields.round])
@@ -348,7 +361,7 @@ export const loadResultsByFields = (cur_state: any, fields: any) => {
     })
   }
 
-  var results = fields.type == 'president' ? state.results[fields.type][fields.year][fields.region][fields.round] : state.results[fields.type][fields.year][fields.region]
+  var results = fields.type === 'president' ? state.results[fields.type][fields.year][fields.region][fields.round] : state.results[fields.type][fields.year][fields.region]
   return {
     ...state,
     type: fields.type,

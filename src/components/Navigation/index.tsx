@@ -1,18 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { 
   IonContent,
   IonHeader,
-  IonMenu,
+  useIonRouter,
   IonMenuButton,
   IonItem,
   IonLabel,
   IonTitle,
   IonToolbar,
   IonList,
+  IonModal
 } from '@ionic/react';
 import './index.css';
 
-const Navigation: React.FC = () => {
+const Navigation = ({...props}: {open: any, setOpen: any}) => {
+	const router = useIonRouter();
 	const pages = [
 		{ title: 'SLOEDP Platform', name: "", component: "" },
 		{ title: 'Presidential', name: "president", component: '' },
@@ -24,26 +26,31 @@ const Navigation: React.FC = () => {
 		// { title: 'VillageHeadman', component: VillageHeadmanPage }
 	];
 
+	const moveTo = (url: any) => {
+		router.push(url, "forward", "push");
+		// props.setOpen(false);
+	}
 
-	return (<IonMenu contentId="content" menuId='content' type="overlay" className='navigation menu-inner'>
+	return (<IonModal isOpen={ props.open } className='menu-modal'>
+		<div className='navigation menu-inner'>
 			<IonHeader>
 				<IonToolbar>
 					<IonTitle>Election Type</IonTitle>
-					<IonMenuButton auto-hide="false" slot="end" >
+					<IonMenuButton auto-hide="false" slot="end" onClick={() => props.setOpen(false)}>
 					</IonMenuButton>
 				</IonToolbar>
 			</IonHeader>
 			<IonContent className="ion-padding">
 				<IonList>
 					{pages.map((page: any) => (
-						<IonItem routerLink={"/" + page.name}>
+						<IonItem onClick={() => moveTo("/" + page.name)} key={page.name} >
 							<IonLabel>{page.title}</IonLabel>
 						</IonItem>
 					))}
 				</IonList>
 			</IonContent>
-		</IonMenu>
-	);
+		</div>
+	</IonModal>)
 };
 
 export default Navigation;

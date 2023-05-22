@@ -5,7 +5,6 @@ import HeaderView from '../../components/HeaderView';
 import { arrowForwardOutline, arrowBackOutline } from 'ionicons/icons';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Swiper as SwiperInterface } from 'swiper';
-import { Pagination } from 'swiper';
 import { useSelector, useDispatch } from 'react-redux';
 import { dataSelector, setYear, setWholeResults } from '../../slices/dataSlice';
 import { useAvailability } from '../../hooks/useAvailability';
@@ -15,10 +14,12 @@ import 'swiper/css';
 import '@ionic/react/css/ionic-swiper.css';
 import 'swiper/css/pagination';
 import ContentView from '../../components/ContentView';
+import Navigation from '../../components/Navigation';
+import president_2023 from './export-all-presidential-results.json'
 
-let whole_results: any = null;
-const PresidentPage: React.FC<{title: string, type: string}> = ({title, type}) => {
+const PageView: React.FC<{title: string, type: string}> = ({title, type}) => {
   const firstRef = useRef<any>();
+  const [open, setOpen] = React.useState(false);
   const [state, setState] = useState<{
     prevYear: number,
     nextYear: number,
@@ -46,7 +47,6 @@ const PresidentPage: React.FC<{title: string, type: string}> = ({title, type}) =
   const year_ = selector.year;
   const [availability, setGranularity] = useAvailability(type, selector.year);
   const region = availability.region;
-  console.log('pageview')
 
   const setPageInfo = () => {
     dispatch(setYear(subpages[totalPages - 1].year));
@@ -103,69 +103,76 @@ const PresidentPage: React.FC<{title: string, type: string}> = ({title, type}) =
   }
 
   useIonViewDidEnter(() => {
-    if (swiperInstance && firstRef.current && !whole_results) {
+    if (swiperInstance && firstRef.current && Object.keys(selector.whole_results).length === 0) {
       console.log('loading')
       present({
         message: 'Loading data...',
         duration: 1000
       });
 
+      // axios.get('https://app.electiondata.io/election_results').then((response: any) => {
       axios.get('http://localhost:5000/election_results').then((response: any) => {
-        whole_results = response.data
-        dispatch(setWholeResults(whole_results));
+        dispatch(setWholeResults({
+          ...response.data,
+          president_2023: president_2023
+        }));
         dismiss();
       });
     }
-    setPageInfo();
+    setPageInfo(); 
   }, [swiperInstance]);
 
   return (
-    <IonPage id="content">
-      <HeaderView type="president" availability={availability} setGranularity={setGranularity}>
-        <IonToolbar color="dark" className='sub-nav'>
-          {state.prevEnabled && 
-            <IonButtons slot="start">
-              <IonButton className='ion-float-left' onClick={setPrevPage} style={{ zIndex: 200}}>
-                <IonIcon icon={arrowBackOutline} slot="start"></IonIcon> {String(state.prevYear)}
-              </IonButton>
-            </IonButtons>}
+    <>
+      <Navigation open={open} setOpen={setOpen}/>
+      <IonPage id="content">
+        <HeaderView setOpen={setOpen} type="president" availability={availability} setGranularity={setGranularity}>
+          <IonToolbar color="dark" className='sub-nav'>
+            {state.prevEnabled && 
+              <IonButtons slot="start">
+                <IonButton className='ion-float-left' onClick={setPrevPage} style={{ zIndex: 200}}>
+                  <IonIcon icon={arrowBackOutline} slot="start"></IonIcon> {String(state.prevYear)}
+                </IonButton>
+              </IonButtons>}
 
-          <IonTitle>
-            { String(year_) } {title}
-          </IonTitle>
+            <IonTitle>
+              { String(year_) } {title}
+            </IonTitle>
 
-          {state.nextEnabled && 
-            <IonButtons slot="end">
-              <IonButton className='ion-float-right' onClick={setNextPage} style={{ zIndex: 200}}>
-                <div>{String(state.nextYear)}</div> <IonIcon icon={arrowForwardOutline} slot="start"></IonIcon> 
-              </IonButton>
-            </IonButtons>}
-        </IonToolbar>
-      </HeaderView>
-      <IonContent className='ion-padding' >
-       <Swiper 
-          onSwiper={(swiper) => setSwiperInstance(swiper)} 
-          onSlideChange={slideChanged}  
-          // modules={[Pagination]} 
-          // pagination={{ clickable: true }}
-          ref={firstRef}
-        >
-          {subpages.map((subpage, index) =>
-            (<SwiperSlide key={'contentview_' + index}>
-              {selector.whole_results.chairperson && region && 
-                <ContentView 
-                  type={type} 
-                  year={subpage.year} 
-                  region={region} 
-                  availability={availability} 
-                  setGranularity={setGranularity}
-                />}
-            </SwiperSlide>)
-          )}
-        </Swiper>
-      </IonContent>
-    </IonPage>
+            {state.nextEnabled && 
+              <IonButtons slot="end">
+                <IonButton className='ion-float-right' onClick={setNextPage} style={{ zIndex: 200}}>
+                  <div>{String(state.nextYear)}</div> <IonIcon icon={arrowForwardOutline} slot="start"></IonIcon> 
+                </IonButton>
+              </IonButtons>}
+          </IonToolbar>
+        </HeaderView>
+        <IonContent className='ion-padding'>
+        <Swiper 
+            onSwiper={(swiper) => setSwiperInstance(swiper)} 
+            onSlideChange={slideChanged}  
+            // modules={[Pagination]} 
+            // pagination={{ clickable: true }}
+            ref={firstRef}
+          >
+            {subpages.map((subpage, index) =>
+              (<SwiperSlide key={'contentview_' + index}>
+                {selector.whole_results.chairperson && region && 
+                  <ContentView 
+                    type={type} 
+                    year={subpage.year} 
+                    region={region} 
+                    availability={availability} 
+                    setGranularity={setGranularity}
+                    setOpen={setOpen}
+                  />}
+              </SwiperSlide>)
+            )}
+          </Swiper>
+        </IonContent>
+      </IonPage>
+    </>
   );
 };
 
-export default PresidentPage;
+export default PageView;
