@@ -36,9 +36,9 @@ import Parliament from './pages/Parliament';
 import ChairPerson from './pages/ChairPerson';
 import Mayor from './pages/Mayor';
 import Councilor from './pages/Councilor';
+import About from './pages/about';
 
 const Splash = React.lazy(() => import('./pages/splash'));
-const About = React.lazy(() => import('./pages/about'));
 const CandidateProfile = React.lazy(() => import('./pages/CandidateProfile'));
 const PartyProfile = React.lazy(() => import('./pages/PartyProfile'));
 

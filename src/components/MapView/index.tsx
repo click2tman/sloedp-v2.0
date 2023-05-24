@@ -10,7 +10,7 @@ import region2018GeoJSON from '../../assets/maps/region-2018.json'
 import districtGeoJSON from '../../assets/maps/district.json'
 import district2018GeoJSON from '../../assets/maps/district-2018.json'
 import { MapContainer, TileLayer, Marker, GeoJSON, Popup, useMap } from 'react-leaflet';
-import { icon, latLng, Layer, marker, geoJSON, tileLayer } from 'leaflet';
+import { icon, latLng } from 'leaflet';
 import './index.css';
 
 interface ContainerProps { year: number, region: string, type: string, onChangeBoundary: any, onCloseMenu: any}

@@ -8,7 +8,6 @@ import { Swiper as SwiperInterface } from 'swiper';
 import { useSelector, useDispatch } from 'react-redux';
 import { dataSelector, setYear, setWholeResults } from '../../slices/dataSlice';
 import { useAvailability } from '../../hooks/useAvailability';
-import axios from 'axios';
 
 import 'swiper/css';
 import '@ionic/react/css/ionic-swiper.css';
@@ -111,13 +110,16 @@ const PageView: React.FC<{title: string, type: string}> = ({title, type}) => {
       });
 
       // axios.get('https://app.electiondata.io/election_results').then((response: any) => {
-      axios.get('http://localhost:5000/election_results').then((response: any) => {
-        dispatch(setWholeResults({
-          ...response.data,
-          president_2023: president_2023
-        }));
-        dismiss();
-      });
+      import('axios').then(async (Axios: any) => {
+        const axios = Axios.default;
+        axios.get('http://localhost:5000/election_results').then((response: any) => {
+          dispatch(setWholeResults({
+            ...response.data,
+            president_2023: president_2023
+          }));
+          dismiss();
+        });
+      })
     }
     setPageInfo(); 
   }, [swiperInstance]);

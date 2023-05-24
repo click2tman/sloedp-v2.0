@@ -8,6 +8,7 @@ import { dataSelector } from '../../slices/dataSlice';
 import 'swiper/css';
 import '@ionic/react/css/ionic-swiper.css';
 import 'swiper/css/pagination';
+
 import TableView from '../TableView';
 
 const ContentView: React.FC<{year: any, type: string, region: any, availability: any, setGranularity: any, setOpen: any}> = ({year, type, region, availability, setGranularity, setOpen}) => {
