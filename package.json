@@ -64,7 +64,7 @@
   },
   "scripts": {
     "dev": "react-scripts start",
-    "start": "node --optimize_for_size --max_old_space_size=2560 server.js",
+    "start": "serve -s build",
     "build": "react-scripts build",
     "test": "react-scripts test --transformIgnorePatterns 'node_modules/(?!(@ionic/react|@ionic/react-router|@ionic/core|@stencil/core|ionicons)/)'",
     "eject": "react-scripts eject",
