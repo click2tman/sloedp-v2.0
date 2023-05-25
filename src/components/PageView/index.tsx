@@ -110,7 +110,8 @@ const PresidentPage: React.FC<{title: string, type: string}> = ({title, type}) =
         duration: 1000
       });
 
-      axios.get('http://localhost:5000/election_results').then((response: any) => {
+      // axios.get('http://localhost:5000/election_results').then((response: any) => {
+      axios.get('https://app.electiondata.io/election_results').then((response: any) => {
         whole_results = response.data
         dispatch(setWholeResults(whole_results));
         dismiss();
